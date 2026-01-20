@@ -282,13 +282,6 @@ if [ ! -f $config_file ]; then
 fi
 }
 
-wg_up() {
-if ip link show $app >/dev/null 2>&1; then
-sudo wg-quick down $app >/dev/null 2>&1
-fi
-sudo wg-quick up $app >/dev/null 2>&1 && echo "Successfully connected to VPN..." && user_status || echo "Unable to connect to Surfshark VPN; make sure you have chosen a configuration file. (-s)" >&2
-}
-
 #Script start
 
 main "$@"
