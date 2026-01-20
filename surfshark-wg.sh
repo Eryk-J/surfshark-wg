@@ -3,7 +3,7 @@
 # surfshark-wg.sh: surfshark-wg written in Bash
 #
 # Author:  Eryk Jensen <jenseneryk@gmail.com>
-# Date:    January 16, 2026
+# Date:    January 19, 2026
 # License: MIT
 
 set -e
