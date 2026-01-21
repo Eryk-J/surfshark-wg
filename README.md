@@ -8,7 +8,7 @@ configurations using Surfshark’s public server metadata API.
 
 This tool fetches live server information, lets you select a server interactively,  
 and generates a wg-quick compatible configuration directly to your  
-`/etc/wireguard/` directory.
+`/etc/wireguard/` directory and connects you to the selected VPN location.
 
 It does NOT handle Surfshark account login or authentication. You must provide  
 your own Surfshark linked WireGuard private key to accept the connection.
