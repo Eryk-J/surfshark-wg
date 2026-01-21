@@ -3,25 +3,25 @@
 # surfshark-wg.sh: surfshark-wg written in Bash
 #
 # Author:  Eryk Jensen <jenseneryk@gmail.com>
-# Date:    January 19, 2026
+# Date:    January 16, 2026
 # License: MIT
 
 set -e
 
-
 #Config startup & argument help
-
 
 main() {	
 	app="surfshark-wg"
 	
 	data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/$app"
 	cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/$app"
+	config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/$app"
 	wg_config="/etc/wireguard/$app.conf"
 	shopt -s nullglob
-	key_loc=(PlaceConfHere/*.conf)
+	key_loc=("$config_dir/PlaceConfHere"/*.conf)
 	shopt -u nullglob
 	config_file="$data_dir/pks"
+	grab_config="$config_dir/PlaceConfHere/"
 
 	# Variables 
 	apidomain='https://api.surfshark.com/'
@@ -29,7 +29,7 @@ main() {
 	server_file="$cache_dir/serverlist.cache"
 	dns_servers=("162.252.172.57" "149.154.159.92")
 
-	mkdir -p "$data_dir" "$cache_dir"
+	mkdir -p "$data_dir" "$cache_dir" "$config_dir" "$grab_config" 
 
 reset_all=0
 check_status=0
@@ -58,10 +58,9 @@ parse_arg() {
     list) print_servers=1 ;;
     renew) renew_servers=1 ;;
     ""|help|-h|--help) usage; exit 0 ;;
-    *) usage; echo >&2; echo "Unknown command: $arg" >&2 ; exit 1 ;;
+    *) usage; echo >&2; echo "Unknown command: $arg and $key_loc" >&2 ; exit 1 ;;
   esac
 }
-
 
 usage() {
   cat <<'EOF'
@@ -93,17 +92,13 @@ reset_it() {
 	if [[ $reset_ans == "YES" ]]; then
 	sudo wg-quick down "$app" >/dev/null 2>&1 || true
 	rm -rf "$config_dir" "$data_dir" "$cache_dir" "$wg_config" || true
-	rm -rf PlaceConfHere/ && mkdir PlaceConfHere/ || true
+	rm -rf "$grab_config" && mkdir "$grab_config" || true
 	echo "Run setup/renew commands to begin using surfshark-wg again."
 	exit 0
 	else
 		exit 1
 	fi
 }
-
-
-
-
 
 
 #Parsed argument functions
@@ -133,7 +128,7 @@ key_fromfile() {
 	if (( ${#key_loc[@]} >= 1 )); then
 		:
 	else
-echo "Place your .conf file in directory 'PlaceConfHere'" >&2
+echo "Place your surfshark .conf file in the ~/.config/surfshark-wg/PlaceConfHere directory." >&2
 echo "This file will be deleted once the key is extracted!" >&2
 exit 1
 	fi
@@ -149,7 +144,7 @@ fi
 done < "$key_loc".temp
 
 if [[ -z $private_key ]]; then
-	echo "The file in 'PlaceConfHere' does not contain a valid private key. Make sure you are using a WireGuard configuration file from Surfshark." >&2
+	echo "The file in '~/.config/surfshark-wg/PlaceConfHere' does not contain a valid private key. Make sure you are using a WireGuard configuration file from Surfshark." >&2
 rm -f "$key_loc".temp
 exit 1
 fi
