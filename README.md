@@ -13,9 +13,9 @@ It does NOT handle Surfshark account login or authentication. You must provide
 your own WireGuard private key for Surfshark to accept the connection.
 
 Dependencies:
-  curl
-  jq
-  wireguard-tools (wg, wg-quick)
+  - curl
+  - jq
+  - wireguard-tools (wg, wg-quick)
 
 Directory layout:
   Surfshark setup config import directory (user-facing):
