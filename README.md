@@ -71,9 +71,9 @@ reset   - Reset EVERYTHING
 
 Examples:
 
-./surfshark-wg.sh up
-./surfshark-wg.sh status
-./surfshark-wg.sh setup
+./surfshark-wg.sh up  
+./surfshark-wg.sh status  
+./surfshark-wg.sh setup  
 
 
 Notes:
