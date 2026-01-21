@@ -30,34 +30,24 @@ YOU ONLY HAVE TO DO THIS ONCE
 
 ./surfshark-wg.sh setup
 
+
 It handles:
 - Generation of directories & key storage  
 - Validation and adoption of Private Keys  
 - Fetching the current Surfshark server list  
 - Clean up  
 
+
 2. Place your Surfshark WireGuard config file (containing your Private Key) into:  
 `~/.config/surfshark-wg/PlaceConfHere/`  
 
-Alternatively, you can input the Private Key via copy+paste or manually during  
+Alternatively, you can input the Private Key manually (copy+paste) during  
 the setup process.
 
-3. Running:
 
-surfshark-wg setup
+4. You then use surfshark-wg up/down to choose and connect/disconnect to and from the VPN.
 
-will:
-- Validate the imported file  
-- Fetch the current Surfshark server list  
-- Generate a WireGuard config for wg-quick  
-- Write it to `/etc/wireguard/surfshark-wg.conf`  
-- Remove the imported file after success  
 
-4. You then use:
-
-surfshark-wg up
-
-to choose and connect to the VPN.
 
 Usage:
 
@@ -68,15 +58,15 @@ Note: Connecting and disconnecting WireGuard requires root privileges.
 
 Commands:
 
-setup Setup, reset, and renew private keys and first server list
-renew Get fresh server list from Surfshark
-up Connect to VPN from list of servers (wg-quick up)
-down Disconnect from current VPN config (wg-quick down)
-status Check status of user connection
-connect Connect to VPN with previous config/server (wg-quick up)
-list Show available servers and their loads
-switch Switch from one WireGuard config to another without connecting
-reset Reset EVERYTHING
+setup   - Setup, reset, and renew private keys and first server list  
+renew   - Get fresh server list from Surfshark  
+up      - Connect to VPN from list of servers (wg-quick up)  
+down    - Disconnect from current VPN config (wg-quick down)  
+status  - Check status of user connection  
+connect - Connect to VPN with previous config/server (wg-quick up)  
+list    - Show available servers and their loads  
+switch  - Switch from one WireGuard config to another without connecting  
+reset   - Reset EVERYTHING  
 
 
 Examples:
