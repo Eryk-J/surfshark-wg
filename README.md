@@ -45,7 +45,7 @@ Alternatively, you can input the Private Key manually (copy+paste) during
 the setup process.
 
 
-4. You then use surfshark-wg up/down to choose and connect/disconnect to and from the VPN.
+4. You then use `./surfshark-wg.sh up` and `./surfshark-wg.sh down` to choose and connect/disconnect to and from the VPN.
 
 
 
