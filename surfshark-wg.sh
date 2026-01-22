@@ -3,7 +3,7 @@
 # surfshark-wg.sh: surfshark-wg written in Bash
 #
 # Author:  Eryk Jensen <jenseneryk@gmail.com>
-# Date:    January 16, 2026
+# Date:    January 21, 2026
 # License: MIT
 
 set -e
@@ -29,8 +29,7 @@ main() {
 	server_file="$cache_dir/serverlist.cache"
 	dns_servers=("162.252.172.57" "149.154.159.92")
 
-	mkdir -p "$data_dir" "$cache_dir" "$config_dir" "$grab_config" 
-
+# parse_arg Variables
 reset_all=0
 check_status=0
 wireguard_down=0
@@ -70,14 +69,14 @@ Note: Connecting and Disconnecting to wireguard requires root privilege.
 
 Commands:
   setup     Setup, reset, and renew private keys
-  reset     Reset EVERYTHING.
   renew     Get fresh server list from Surfshark
   up        Connect to VPN from list of servers (wg-quick up)
   down      Disconnect from current VPN config (wg-quick down)
   status    Check status of user connection
   connect   Connect to VPN with previous config/server (wg-quick up) 
   list      Show available servers and their loads 
-  switch    Switch from one wireguard config to another without connecting.
+  switch    Switch from one wireguard config to another without connecting
+  reset     Reset EVERYTHING
 
 Examples:
   ./surfshark-wg.sh up
@@ -114,14 +113,27 @@ fi
 
 get_servers() {
 	if [ -f $server_file ]; then mv "$server_file" "$server_file.old"; fi
+
+	printf 'Fetching & formatting Surfshark server list...'
+	if curl -fsSL --connect-timeout 5 --max-time 10 "$url" -o "$tmp" >/dev/null 2>&1; then
+		mv "$server_file.tmp" "$server_file"
+		printf '\r\033[KFetching & formatting Surfshark server list... DONE\n'; else
+		printf '\r\033[KFetching & formatting Surfshark server list... FAILED\n'
+fi
 	curl -fsSL --connect-timeout 5 "$server_url" -o "$server_file.tmp" && mv "$server_file.tmp" "$server_file"
-		if [ -f "$server_file" ]; then
+ 		if [ -f "$server_file" ]; then
 		rm -f "$server_file.old"
 		echo "New server list downloaded and formatted."; else
+		if [ -f "$server_file.old" ]; then
 		mv "$server_file.old" "$server_file"
 		echo "Unable to download server information, previous server file will be used."
-                exit 2
+		echo ""
+                return 0; else
+		echo "Unable to download server information."
+		echo ""
+		return 0
 		fi
+fi
 }
 
 key_fromfile() {
@@ -195,7 +207,7 @@ else
 echo "Welcome to surfshark-wg created by Eryk Jensen, please read the README. ENJOY!"
 fi
 
-read -rp "Are you using a Surfshark config file? (y/n): " ans
+read -rp "Are you using a Surfshark config file? (type n if manually entering key) (y/n): " ans
 if [[ $ans =~ ^[Yy]$ ]]; then
 	key_fromfile
 elif [[ $ans =~ ^[Nn]$ ]]; then
@@ -222,7 +234,7 @@ jq -r '
   to_entries[]
   | "\(.key)) \(.value.country)-\(.value.location)|\(.value.load)| \(.value.tags)"
 ' "$server_file" \
-| paste -d $'\t' - - - \
+| paste -d $'\t' - - \
 | column -t -s $'\t'
 }
 
@@ -277,6 +289,14 @@ if [ ! -f $config_file ]; then
 fi
 }
 
+first_setup() {
+if [[ ! -d "$grab_config" || ! -d "$data_dir" || ! -d "$cache_dir" || ! -d "$config_dir" ]]; then
+	mkdir -p "$data_dir" "$cache_dir" "$config_dir" "$grab_config" && get_servers && echo "First setup completed, prepare your Private Key with the Surfshark conf file or Private Key copy+paste."
+	return 0; else
+	return 0
+fi
+}
+
 #Script start
 
 main "$@"
@@ -297,4 +317,4 @@ if [ $check_status -eq 1 ]; then user_status; exit 1; fi
 
 if [ $renew_servers -eq 1 ]; then get_servers; exit 1; fi
 
-if [ $priv_key -eq 1 ]; then key_setup; exit 1; fi
+if [ $priv_key -eq 1 ]; then first_setup; key_setup; exit 1; fi
