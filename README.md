@@ -1,6 +1,6 @@
 # surfshark-wg
 
-Author: Eryk Jensen <jenseneryk@gmail.com>  
+Author: Eryk-J
 Date: January 21, 2026  
 
 A small Bash utility for generating, managing and connecting to Surfshark WireGuard  
