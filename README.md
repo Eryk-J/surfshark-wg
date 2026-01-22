@@ -3,8 +3,8 @@
 Author: Eryk Jensen <jenseneryk@gmail.com>  
 Date: January 21, 2026  
 
-A small Bash utility for generating and managing Surfshark WireGuard client  
-configurations using Surfshark’s public server metadata API.
+A small Bash utility for generating, managing and connecting to Surfshark WireGuard  
+client configurations using Surfshark’s public server metadata API.  
 
 This tool fetches live server information, lets you select a server interactively,  
 and generates a wg-quick compatible configuration directly to your  
@@ -26,19 +26,9 @@ Surfshark setup config import directory (user-facing):
 HOW TO GET STARTED:  
 YOU ONLY HAVE TO DO THIS ONCE
 
-1. Run:
+1. Run `./surfshark-wg.sh setup`  
 
-./surfshark-wg.sh setup
-
-
-It handles:
-- Generation of directories & key storage  
-- Validation and adoption of Private Keys  
-- Fetching the current Surfshark server list  
-- Clean up  
-
-
-2. Place your Surfshark WireGuard config file (containing your Private Key) into:  
+3. Place your Surfshark WireGuard config file (containing your Private Key) into:  
 `~/.config/surfshark-wg/PlaceConfHere/`  
 
 Alternatively, you can input the Private Key manually (copy+paste) during  
