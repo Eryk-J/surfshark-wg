@@ -18,11 +18,10 @@ Dependencies:
 - jq  
 - wireguard-tools (wg, wg-quick)  
 
-Directory layout:
-
 Surfshark setup config import directory (user-facing):  
-`~/.config/surfshark-wg/PlaceConfHere/`
-
+`~/.config/surfshark-wg/PlaceConfHere/`  
+  
+  
 HOW TO GET STARTED:  
 YOU ONLY HAVE TO DO THIS ONCE
 
