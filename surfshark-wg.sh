@@ -49,7 +49,7 @@ parse_arg() {
   case "$arg" in
     up) wireguard_up=1 ;;
     down) wireguard_down=1 ;;
-    connect) wireguard_connect=1 ;;
+    c|connect) wireguard_connect=1 ;;
     status) check_status=1 ;;
     reset) reset_all=1 ;;
     setup) priv_key=1 ;;
@@ -90,8 +90,8 @@ reset_it() {
 	read -rp $'THIS WILL RESET EVERYTHING TO DEFAULT! Type YES (all caps) to continue.\nTyping anything else will abort: ' reset_ans
 	if [[ $reset_ans == "YES" ]]; then
 	sudo wg-quick down "$app" >/dev/null 2>&1 || true
-	rm -rf "$config_dir" "$data_dir" "$cache_dir" "$wg_config" || true
-	rm -rf "$grab_config" && mkdir "$grab_config" || true
+	sudo rm -rf "$config_dir" "$data_dir" "$cache_dir" "$wg_config" || true
+	sudo rm -rf "$grab_config" && mkdir "$grab_config" || true
 	echo "Run setup/renew commands to begin using surfshark-wg again."
 	exit 0
 	else
@@ -111,29 +111,19 @@ exit 1
 fi
 }
 
-get_servers() {
-	if [ -f $server_file ]; then mv "$server_file" "$server_file.old"; fi
-
-	printf 'Fetching & formatting Surfshark server list...'
-	if curl -fsSL --connect-timeout 5 --max-time 10 "$url" -o "$tmp" >/dev/null 2>&1; then
-		mv "$server_file.tmp" "$server_file"
-		printf '\r\033[KFetching & formatting Surfshark server list... DONE\n'; else
-		printf '\r\033[KFetching & formatting Surfshark server list... FAILED\n'
-fi
-	curl -fsSL --connect-timeout 5 "$server_url" -o "$server_file.tmp" && mv "$server_file.tmp" "$server_file"
- 		if [ -f "$server_file" ]; then
-		rm -f "$server_file.old"
-		echo "New server list downloaded and formatted."; else
-		if [ -f "$server_file.old" ]; then
-		mv "$server_file.old" "$server_file"
-		echo "Unable to download server information, previous server file will be used."
-		echo ""
-                return 0; else
-		echo "Unable to download server information."
-		echo ""
-		return 0
-		fi
-fi
+get_servers() 
+{
+curl -fsSL --connect-timeout 3 "$server_url" -o "$server_file.tmp"
+if [ -f $server_file ]; then mv "$server_file" "$server_file.old"; fi
+	if [ -f "$server_file.tmp" ]; then
+	mv "$server_file.tmp" "$server_file" && rm -f "$server_file.old"
+	echo "New server list downloaded and formatted."; else
+	#if [ -f "$server_file.old" ]; then
+	mv "$server_file.old" "$server_file" >/dev/null 2>&1
+	echo "Unable to download server information, previous server file will be used."
+	echo ""
+	fi
+	return 0
 }
 
 key_fromfile() {
@@ -254,8 +244,10 @@ endpoint=${endpoint#\"}; endpoint=${endpoint%\"}
 
 template_conf="[Interface]\nAddress = 10.14.0.2/16\nPrivateKey = $(<"$config_file")\nDNS = ${dns_servers[0]}, ${dns_servers[1]}\n[Peer]\nPublicKey = $pub_key\nAllowedIPs = 0.0.0.0/0\nEndpoint = $endpoint:51820"
 
+
 tmp=$(mktemp)
 printf '%b' "$template_conf" > "$tmp" && sudo mv "$tmp" $wg_config
+return
 }
 
 wg_confirmdown() {
@@ -279,14 +271,15 @@ wg_up() {
 if ip link show $app >/dev/null 2>&1; then
 sudo wg-quick down $app >/dev/null 2>&1
 fi
-sudo wg-quick up $app >/dev/null 2>&1 && echo "Successfully connected to VPN..." && user_status || echo "Unable to connect to Surfshark VPN; make sure you have chosen a configuration file. (-s)" >&2
+sudo wg-quick up $app >/dev/null 2>&1 && echo "Successfully connected to VPN..." && user_status || echo "Unable to connect to Surfshark VPN; make sure you have chosen a configuration file." >&2
 }
 
 setup_check() {
-if [ ! -f $config_file ]; then
+if [ ! -f "$config_file" ]; then
 	echo "No setup file detected. Please read the README and run the setup command!"; else
 	return 0
 fi
+return 0
 }
 
 first_setup() {
