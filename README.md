@@ -3,9 +3,9 @@
 Author: Eryk-J  
 Date: January 21, 2026  
 
-Utility for generating, managing, and connecting to Surfshark WireGuard  
+This utility is for generating, managing, and connecting to Surfshark WireGuard  
 client configurations using Surfshark’s public server metadata API written  
-entirely in Bash.
+entirely in Bash and operated in your CLI.
 
 This tool fetches live server information, lets you select a server interactively,  
 and generates a wg-quick compatible configuration directly to your  
